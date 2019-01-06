@@ -1,0 +1,98 @@
+ #include <iostream>
+#include <ctime>
+#include <iomanip>
+using namespace std;
+ 
+int main(int argc, char* argv[])
+{
+    srand(time(NULL));
+    setlocale(LC_ALL, "rus");
+    int number_str,
+        number_stol; 
+    cout << "Введите количество строк матрицы: ";
+    cin >> number_str;
+    cout << "Введите количество столбцов матрицы: ";
+    cin >> number_stol;
+    int **ptrarray = new int* [number_str];
+    for (int count = 0; count < number_str; count++)
+        ptrarray[count] = new int [number_stol];
+ 
+    cout << "\nИсходный массив:\n";
+    for (int counter_str = 0; counter_str < number_str; counter_str++)
+    {
+        for (int counter_stol = 0; counter_stol < number_stol; counter_stol++)
+        {
+            ptrarray[counter_str][counter_stol] = rand() % 100 - rand() % 100; 
+            cout << setw(3) << ptrarray[counter_str][counter_stol] << "  "; 
+        }
+        cout << endl;
+    }
+    cout << endl;
+ 
+    int *ptrsum = new int [number_stol]; 
+    for (int counter_stol = 0; counter_stol < number_stol; counter_stol++)
+    {
+        ptrsum[counter_stol] = 0; 
+        for (int counter_str = 0; counter_str < number_str; counter_str++)
+            if ( (ptrarray[counter_str][counter_stol] < 0) && ((ptrarray[counter_str][counter_stol] % 2 != 0)))
+                ptrsum[counter_stol] += abs(ptrarray[counter_str][counter_stol]);
+    }
+ 
+    cout << "\nМассив характеристик:\n";
+    for ( int counter = 0; counter < number_stol; counter++)
+        cout << setw(3) << ptrsum[counter] << "  "; 
+    cout << endl << endl;
+ 
+    int *ptrindex = new int [number_stol]; 
+    int min = 1000, 
+        index_stol; 
+ 
+    
+    for (int counter_value = 0; counter_value < number_stol; counter_value++)
+    {
+        for (int counter = 0; counter < number_stol; counter++)
+        {
+            if (min > ptrsum[counter] && ptrsum[counter] != -1)
+            {
+                min = ptrsum[counter]; 
+                index_stol = counter; 
+            }
+        }
+     ptrindex[counter_value] = index_stol;
+     ptrsum[index_stol] = -1; 
+     min = 1000;
+    }
+    delete [] ptrsum; 
+
+    int **ptrarray_relocation = new int* [number_str];
+    for (int count = 0; count < number_str; count++)
+        ptrarray_relocation[count] = new int [number_stol];
+
+    for (int counter_stol = 0; counter_stol < number_stol; counter_stol++)
+        for (int counter_str = 0; counter_str < number_str; counter_str++)
+                ptrarray_relocation[counter_str][counter_stol] = ptrarray[counter_str][ptrindex[counter_stol]]; 
+ 
+    
+    cout << "\nМассив после перестановок столбцов:\n";
+    for (int  counter_str= 0; counter_str < number_str; counter_str++)
+    {
+        for (int counter_stol = 0; counter_stol < number_stol; counter_stol++)
+        {
+            cout << setw(3) << ptrarray_relocation[counter_str][counter_stol]  << "  ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    for (int count = 0; count < number_str; count++)
+        delete []ptrarray[count];
+ 
+    delete [] ptrindex; 
+    
+    for (int count = 0; count < number_str; count++)
+        delete []ptrarray_relocation[count];
+ 
+    system("pause");
+    return 0;
+        
+    }
