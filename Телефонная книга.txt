@@ -1,0 +1,271 @@
+#include <iostream>
+# include < vector>
+# include < string>
+#include <sstream>
+using namespace std;
+
+ voidMenu(int &step),
+ conclusionFunc(vector<string> &abonent, int &i),
+ AddToAbonent(vector<string> &abonent, int &id),
+ DeleteFromAbonent(vector<string> &abonent),
+ ShowAbonent(vector<string> &abonent),
+ SortByDate(vector<string> &abonent),
+ FromDateToDate(vector<string> &abonent),
+ FromDurToDur(vector<string> &abonent),
+ SortOnFrom(vector<string> &abonent),
+ SortOnTo(vector<string> &abonent);
+
+int main(){
+	int step, id=1;
+ vector<string> abonent;
+
+	setlocale(LC_ALL, " Russian");
+	Menu(step);
+	while (step >= 1  && step <= 8){
+		switch (step){
+		case 1:
+			system("cls");
+ cin.get();
+			AddToList(abonent, id);
+			Menu(step);
+			break;
+		case 2:
+			system("cls");
+			DeleteFromList(abonent);
+			Menu(step);
+			break;
+		case 3:
+			system("cls");
+			cin.get();
+			ShowList(abonent);
+			Menu(step);
+			break;
+		case 4:
+			system("cls");
+			SortByDate(abonent);
+			Menu(step);
+			break;
+		case 5:
+			system("cls");
+			FromDateToDate(abonent);
+			Menu(step);
+			break;
+		case 6:
+			system("cls");
+			FromDurToDur(abonent);
+			Menu(step);
+			break;
+		case 7:
+			system("cls");
+			SortOnFrom(abonent);
+			Menu(step);
+			break;
+		case 8:
+			system("cls");
+			SortOnTo(abonent);
+			Menu(step);
+			break;
+		}
+	}
+	system("pause");
+	return 0;
+}
+
+void AddToAbonent(vector<string> &abonent, int &id) {
+	string from, to, date, time, duration;
+	cout << "вставить из: "; getline(cin, from);
+	cout << "вставить в:: ";  getline(cin, to);
+	cout << "вставить дату: ";  getline(cin, date);
+	cout << "вставить время: ";  getline(cin, time);
+	cout << "вставить длительность: ";  getline(cin, duration);
+	abonent.push_back(to_string(id));
+	abonent.push_back(from);
+	abonent.push_back(to);
+	abonent.push_back(date);
+	abonent.push_back(time);
+	abonent.push_back(duration);
+	id++;
+}
+
+void ShowAbonent(vector<string> &abonent) {
+	for(int i=0; i<abonent.size(); i++)
+    {
+            cout << abonent.at(i) << "\t";
+            if((i+1)%6==0 && i!=0) cout<<endl;
+    }
+    system("pause");
+}
+
+void DeleteFromAbonent(vector<string> &abonent) {
+    int _id, it=0;
+    cout<<"Введеите id вызова который хотите удалить: "; cin>>_id;
+    try{
+    for(int i=0; i<abonent.size(); i+=6)
+    {
+        if(abonent.at(i)==to_string(_id))
+        {
+            abonent.erase(abonent.begin()+i, abonent.begin()+(i+6));
+        }
+    }
+    } catch (const std::out_of_range& oor){}
+
+    system("pause");
+}
+
+void SortByDate(vector<string> &abonent){
+    int data0, data, n, m;
+    string temp[6];
+    div_t d1, d2;
+    istringstream ss(abonent.at(3));
+    while (ss){
+        ss >> data0;
+    }
+    for(int i=0; i<abonent.size(); i+=6)
+    {
+        for(int j=0; j<6; j++)
+        {
+            temp[j]=abonent.at(i+j);
+        }
+        istringstream iss(temp[3]);
+        while (iss){
+            iss >> data;
+        }
+        n = data%100;
+        m = data0%100;
+        if(n<m){
+            d1=div(data,100);
+            d2=div(data0,100);
+            n=d1.quot%100;
+            m=d2.quot%100;
+            if(n<m){
+                d1=div(data,10000);
+                d2=div(data0,10000);
+                n=d1.quot;
+                m=d2.quot;
+                if(n<m){
+                    abonent.at(i)=abonent.at(i-6);
+                    abonent.at(i+1)=abonent.at(i-5);
+                    abonent.at(i+2)=abonent.at(i-4);
+                    abonent.at(i+3)=abonent.at(i-3);
+                    abonent.at(i+4)=abonent.at(i-2);
+                    abonent.at(i+5)=abonent.at(i-1);
+
+                    abonent.at(i-6)=temp[0];
+                    abonent.at(i-5)=temp[1];
+                    abonent.at(i-4)=temp[2];
+                    abonent.at(i-3)=temp[3];
+                    abonent.at(i-2)=temp[4];
+                    abonent.at(i-1)=temp[5];
+                }
+            }
+        }
+    }
+}
+
+void FromDateToDate(vector<string> &abonent){
+    int start, fin, n , m, temp, abon;
+    div_t d1;
+    cout<<" вставить с даты: "; cin>>start;
+    cout<<"вставить в дату: "; cin>>fin;
+    for(int i=0; i<abonent.size(); i+=6)
+    {
+        n = start%100;
+        m = fin%100;
+        istringstream ss(abonent.at(i+3));
+        while (ss){
+            ss >> temp;
+        }
+        abon=temp%100;
+        if(abon>n && abon<m)
+        {
+            conclusionFunc(abonent, i);
+        }
+        else{
+            d1=div(start,100);
+            n=d1.quot%100;
+            d1=div(fin,100);
+            m=d1.quot%100;
+            d1=div(temp,100);
+            abon=d1.quot%100;
+            if(abon>n && abon<m){
+                conclusionFunc(abon, i);
+            }
+            else{
+                d1=div(start,10000);
+                n=d1.quot%100;
+                d1=div(fin,10000);
+                m=d1.quot%100;
+                d1=div(temp,10000);
+                lis=d1.quot%100;
+                if(abon>n && abon<m){
+                    conclusionFunc(abonent, i);
+                }
+            }
+            }
+    }
+    system("pause");
+}
+
+void FromDurToDur(vector<string> &abonent){
+    int start, fin, abon;
+    cout<<"вставить c длительность: "; cin>>start;
+    cout<<"вставить в длительность: "; cin>>fin;
+    for(int i=0; i<abonent.size(); i+=6)
+    {
+        istringstream ss(abonent.at(i+5));
+        while (ss){
+            ss >> abon;
+        }
+        if(abon>start && abon<fin){
+            conclusionFunc(abonent, i);
+        }
+    }
+    system("pause");
+}
+
+void SortOnFrom(vector<string> &abonent){
+    string from;
+    cout<<"вставить из:: "; cin>>from;
+    for(int i=0; i<abonent.size(); i+=6)
+    {
+        if(abonent.at(i+1)==from){
+            conclusionFunc(abonent, i);
+        }
+    }
+    system("pause");
+}
+
+void SortOnTo(vector<string> &abonent){
+    string to;
+    cout<<"вставить в : "; cin>>to;
+    for(int i=0; i<abonent.size(); i+=6)
+    {
+        if(abonent.at(i+2)==to){
+            conclusionFunc(abonent, i);
+        }
+    }
+    system("pause");
+}
+
+void conclusionFunc(vector<string> &abonent, int &i){
+    cout << abonent.at(i) << "\t";
+    cout << abonent.at(i+1) << "\t";
+    cout << abonent.at(i+2) << "\t";
+    cout << abonent.at(i+3) << "\t";
+    cout << abonent.at(i+4) << "\t";
+    cout << abonent.at(i+5) << "\t";
+    cout<<endl;
+}
+
+void Menu(int &step) {
+	system("cls");
+	cout << "1. добавить вызов" << endl;
+	cout << "2. удалить вызов по id"" << endl;
+	cout << "3. Показать список" << endl;
+	cout << "4. сортировать список по дате" << endl;
+	cout << "5. показать от даты к дате " << endl;
+	cout << "6. показать от длительности к длительности" << endl;
+	cout << "7. Сортировать по из" << endl;
+	cout << "8. Сортировать по в" << endl;
+	cin >> step;
+}
